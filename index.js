@@ -24,34 +24,43 @@ app.get("/api/hello", function (req, res) {
   res.json({greeting: 'hello API'});
 });
 
-app.get('/api/:date', (req, res) => {
+app.get('/api/:date?', (req, res) => {
   const dateString = req.params.date;
 
-  // Check if the date parameter is a number
-  if (Number.isInteger(Number(dateString))) {
-    // If it is a number, parse it as a Unix timestamp
-    const date = new Date(Number(dateString));
-
-    // Check if the date is valid
-    if (date.toString() === 'Invalid Date') {
-      res.status(400).json({ error: 'Invalid Date' });
-    } else {
-      res.json({
-        unix: date.getTime(),
-        utc: date.toUTCString()
-      });
-    }
+  if (!dateString) {
+    // If the date parameter is not provided, get the current time
+    const date = new Date();
+    res.json({
+      unix: date.getTime(),
+      utc: date.toUTCString()
+    });
   } else {
-    // If the date parameter is not a number, parse it as a string
-    const date = new Date(dateString);
+    // Check if the date parameter is a number
+    if (Number.isInteger(Number(dateString))) {
+      // If it is a number, parse it as a Unix timestamp
+      const date = new Date(Number(dateString));
 
-    if (date.toString() === 'Invalid Date') {
-      res.status(400).json({ error: 'Invalid Date' });
+      // Check if the date is valid
+      if (date.toString() === 'Invalid Date') {
+        res.status(400).json({ error: 'Invalid Date' });
+      } else {
+        res.json({
+          unix: date.getTime(),
+          utc: date.toUTCString()
+        });
+      }
     } else {
-      res.json({
-        unix: date.getTime(),
-        utc: date.toUTCString()
-      });
+      // If the date parameter is not a number, parse it as a string
+      const date = new Date(dateString);
+
+      if (date.toString() === 'Invalid Date') {
+        res.status(400).json({ error: 'Invalid Date' });
+      } else {
+        res.json({
+          unix: date.getTime(),
+          utc: date.toUTCString()
+        });
+      }
     }
   }
 });
